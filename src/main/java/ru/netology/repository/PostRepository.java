@@ -12,7 +12,8 @@ public class PostRepository {
   private long counter;
 
   public List<Post> all() {
-    if (posts.isEmpty()) return Collections.emptyList();
+    if (posts.isEmpty())
+      return new ArrayList<>();
     return new ArrayList<>(posts);
   }
 
