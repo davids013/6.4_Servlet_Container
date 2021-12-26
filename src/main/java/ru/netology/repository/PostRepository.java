@@ -3,42 +3,47 @@ package ru.netology.repository;
 import ru.netology.exception.NotFoundException;
 import ru.netology.model.Post;
 
-import java.util.*;
-import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicLong;
 
 // Stub
 public class PostRepository {
-  private final List<Post> posts = new CopyOnWriteArrayList<>();
-  private long counter;
+    private final Map<Long, Post> posts = new ConcurrentHashMap<>();
+    private final AtomicLong counter = new AtomicLong(0);
 
-  public List<Post> all() {
-    if (posts.isEmpty()) return Collections.emptyList();
-    return new ArrayList<>(posts);
-  }
-
-  public Optional<Post> getById(long id) {
-    return posts.stream().filter(p -> p.getId() == id).findFirst();
-  }
-
-  public Post save(Post post) {
-    final long id = post.getId();
-    if (id == 0) {
-      final Post newPost = new Post(++counter, post.getContent());
-      posts.add(newPost);
-      return newPost;
-    } else {
-      for (Post p : posts) {
-        if (p.getId() == id) {
-          posts.remove(p);
-          posts.add(post);
-          return post;
-        }
-      }
+    public List<Post> all() {
+        if (posts.isEmpty())
+            return new ArrayList<>();
+        return new ArrayList<>(posts.values());
     }
-    throw new NotFoundException("Can't override. There is no post with id " + id);
-  }
 
-  public void removeById(long id) {
-    posts.removeIf(p -> p.getId() == id);
-  }
+    public Optional<Post> getById(long id) {
+        return Optional.ofNullable(posts.get(id));
+    }
+
+    public Post save(Post post) {
+        final long id = post.getId();
+        if (id == 0) {
+            final long nextId = counter.incrementAndGet();
+            final Post newPost = new Post(nextId, post.getContent());
+            posts.put(nextId, newPost);
+            return newPost;
+        } else {
+            if (posts.containsKey(id)) {
+                posts.put(id, post);
+                return post;
+            }
+        }
+        throw new NotFoundException("Can't override. There is no post #" + id);
+    }
+
+    public void removeById(long id) {
+        if (posts.containsKey(id)) {
+            posts.remove(id);
+        } else throw new NotFoundException("Can't delete. There is no post #" + id);
+    }
 }
