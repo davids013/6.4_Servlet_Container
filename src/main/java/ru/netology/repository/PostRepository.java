@@ -22,7 +22,7 @@ public class PostRepository {
     }
 
     public Optional<Post> getById(long id) {
-        return posts.values().stream().filter(p -> p.getId() == id).findFirst();
+        return Optional.ofNullable(posts.get(id));
     }
 
     public Post save(Post post) {
