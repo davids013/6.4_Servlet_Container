@@ -2,6 +2,8 @@ package ru.netology.servlet;
 
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import ru.netology.configuration.JavaConfiguration;
+import ru.netology.controller.PostController;
 import ru.netology.controller.PostController;
 import ru.netology.exception.NotFoundException;
 import ru.netology.repository.PostRepository;
@@ -10,7 +12,6 @@ import ru.netology.service.PostService;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 
 public class MainServlet extends HttpServlet {
     private final String POSTS_PATH = "/api/posts";
@@ -18,6 +19,7 @@ public class MainServlet extends HttpServlet {
 
     @Override
     public void init() {
+//        final ApplicationContext context = new AnnotationConfigApplicationContext(JavaConfiguration.class);
         final ApplicationContext context = new AnnotationConfigApplicationContext("ru.netology");
         controller = (PostController) context.getBean("postController");
     }
