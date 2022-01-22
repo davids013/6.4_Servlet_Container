@@ -1,5 +1,6 @@
 package ru.netology.repository;
 
+import org.springframework.stereotype.Repository;
 import ru.netology.exception.NotFoundException;
 import ru.netology.model.Post;
 
@@ -11,6 +12,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
 
 // Stub
+@Repository
 public class PostRepository {
     private final Map<Long, Post> posts = new ConcurrentHashMap<>();
     private final AtomicLong counter = new AtomicLong(0);
@@ -38,10 +40,12 @@ public class PostRepository {
                 return post;
             }
         }
-        throw new NotFoundException("Can't override. There is no post with id " + id);
+        throw new NotFoundException("Can't override. There is no post #" + id);
     }
 
     public void removeById(long id) {
-        posts.remove(id);
+        if (posts.containsKey(id)) {
+            posts.remove(id);
+        } else throw new NotFoundException("Can't delete. There is no post #" + id);
     }
 }

@@ -4,6 +4,10 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import ru.netology.configuration.JavaConfiguration;
 import ru.netology.controller.PostController;
+import ru.netology.controller.PostController;
+import ru.netology.exception.NotFoundException;
+import ru.netology.repository.PostRepository;
+import ru.netology.service.PostService;
 
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -15,7 +19,8 @@ public class MainServlet extends HttpServlet {
 
     @Override
     public void init() {
-        final ApplicationContext context = new AnnotationConfigApplicationContext(JavaConfiguration.class);
+//        final ApplicationContext context = new AnnotationConfigApplicationContext(JavaConfiguration.class);
+        final ApplicationContext context = new AnnotationConfigApplicationContext("ru.netology");
         controller = (PostController) context.getBean("postController");
     }
 
@@ -45,9 +50,16 @@ public class MainServlet extends HttpServlet {
                 return;
             }
             resp.setStatus(HttpServletResponse.SC_NOT_FOUND);
-        } catch (Exception e) {
+        } catch (NotFoundException | IOException e) {
             e.printStackTrace();
-            resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            final int statusCode = HttpServletResponse.SC_NOT_FOUND;
+            resp.setStatus(statusCode);
+            resp.setContentType("text/plain");
+            try {
+                resp.getWriter().print("ERROR " + statusCode + "\n" + e.getMessage());
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
         }
     }
 }
