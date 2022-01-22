@@ -1,6 +1,7 @@
 package ru.netology.controller;
 
 import com.google.gson.Gson;
+import org.springframework.stereotype.Controller;
 import ru.netology.exception.NotFoundException;
 import ru.netology.model.Post;
 import ru.netology.service.PostService;
@@ -12,6 +13,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 
+@Controller
 public class PostController {
     public static final String APPLICATION_JSON = "application/json";
     private final PostService service;
@@ -29,9 +31,16 @@ public class PostController {
 
     public void getById(long id, HttpServletResponse response) throws IOException {
         final Gson gson = new Gson();
-        final Post data = service.getById(id);
-        response.setContentType(APPLICATION_JSON);
-        response.getWriter().print(gson.toJson(data));
+        try {
+            final Post data = service.getById(id);
+            response.setContentType(APPLICATION_JSON);
+            response.getWriter().print(gson.toJson(data));
+        } catch (NotFoundException e) {
+            final int status = HttpServletResponse.SC_NOT_FOUND;
+            response.setStatus(status);
+            response.setContentType("text/plain");
+            response.getWriter().print("ERROR " + status + "\nPost " + id + " not found");
+        }
     }
 
     public void save(Reader body, HttpServletResponse response) throws IOException {

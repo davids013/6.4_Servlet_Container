@@ -3,6 +3,7 @@ HELP.md
 build/
 target/
 src/main/resources/apache-tomcat-9.0.56/
+/libs/
 
 ### STS ###
 .apt_generated
