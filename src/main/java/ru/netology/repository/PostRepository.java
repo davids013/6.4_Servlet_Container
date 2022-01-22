@@ -40,10 +40,12 @@ public class PostRepository {
                 return post;
             }
         }
-        throw new NotFoundException("Can't override. There is no post with id " + id);
+        throw new NotFoundException("Can't override. There is no post #" + id);
     }
 
     public void removeById(long id) {
-        posts.remove(id);
+        if (posts.containsKey(id)) {
+            posts.remove(id);
+        } else throw new NotFoundException("Can't delete. There is no post #" + id);
     }
 }
