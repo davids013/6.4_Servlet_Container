@@ -22,7 +22,6 @@ public class PostRepository {
     }
 
     public Optional<Post> getById(long id) {
-//        return posts.values().stream().filter(p -> p.getId() == id).findFirst();
         return Optional.ofNullable(posts.get(id));
     }
 
@@ -39,10 +38,12 @@ public class PostRepository {
                 return post;
             }
         }
-        throw new NotFoundException("Can't override. There is no post with id " + id);
+        throw new NotFoundException("Can't override. There is no post #" + id);
     }
 
     public void removeById(long id) {
-        posts.remove(id);
+        if (posts.containsKey(id)) {
+            posts.remove(id);
+        } else throw new NotFoundException("Can't delete. There is no post #" + id);
     }
 }

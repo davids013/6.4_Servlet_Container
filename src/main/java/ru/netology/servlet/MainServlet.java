@@ -1,6 +1,7 @@
 package ru.netology.servlet;
 
 import ru.netology.controller.PostController;
+import ru.netology.exception.NotFoundException;
 import ru.netology.repository.PostRepository;
 import ru.netology.service.PostService;
 
@@ -46,10 +47,19 @@ public class MainServlet extends HttpServlet {
                 return;
             }
             resp.setStatus(HttpServletResponse.SC_NOT_FOUND);
-        } catch (Exception e) {
+        } catch (NotFoundException e) {
+            e.printStackTrace();
+            final int statusCode = HttpServletResponse.SC_NOT_FOUND;
+            resp.setStatus(statusCode);
+            resp.setContentType("text/plain");
+            try {
+                resp.getWriter().print("ERROR " + statusCode + "\n" + e.getMessage());
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+        } catch (IOException e) {
             e.printStackTrace();
             resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         }
     }
 }
-
