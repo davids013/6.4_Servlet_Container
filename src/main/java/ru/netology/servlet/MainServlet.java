@@ -10,6 +10,7 @@ import ru.netology.service.PostService;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 
 public class MainServlet extends HttpServlet {
     private final String POSTS_PATH = "/api/posts";
@@ -47,7 +48,7 @@ public class MainServlet extends HttpServlet {
                 return;
             }
             resp.setStatus(HttpServletResponse.SC_NOT_FOUND);
-        } catch (NotFoundException e) {
+        } catch (NotFoundException | IOException e) {
             e.printStackTrace();
             final int statusCode = HttpServletResponse.SC_NOT_FOUND;
             resp.setStatus(statusCode);
@@ -57,9 +58,6 @@ public class MainServlet extends HttpServlet {
             } catch (IOException ex) {
                 ex.printStackTrace();
             }
-        } catch (IOException e) {
-            e.printStackTrace();
-            resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         }
     }
 }
